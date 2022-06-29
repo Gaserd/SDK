@@ -42,7 +42,7 @@ import {
   setSelectedChainId
 } from '@azuro-protocol/sdk'
 import { Web3Provider } from '@ethersproject/providers'
-import Web3 from ('web3')
+import Web3 from 'web3'
 
 const library = new Web3Provider(Web3.currentProvider)
 
@@ -69,11 +69,13 @@ setWalletProvider(library)
 This function synchronizes with the blockchain and gives you all the matches that are currently recorded in the blockchain. You also have the option to filter out these matches if you don't want to receive past matches or cancelled matches.
 
 ```javascript
-import { fetchGames } from ('@azuro-protocol/sdk')
+import { fetchGames } from '@azuro-protocol/sdk'
 
 await fetchGames({
+  filters : {
     resolved: false,
     canceled: false,
+  }
 })
 ```
 
@@ -144,7 +146,7 @@ To understand what identifiers to outcomeId and other parameters mean, see our I
 A function to set the chain id you will use for blockchain transactions.
 
 ```javascript
-import { setSelectedChainId } from ('@azuro-protocol/sdk')
+import { setSelectedChainId } from '@azuro-protocol/sdk'
 setSelectedChainId(100)
 ```
 
@@ -153,7 +155,7 @@ setSelectedChainId(100)
 The function sets the contracts with which you will interact. These are the contracts of our protocol.
 
 ```javascript
-import { setContractAddresses } from ('@azuro-protocol/sdk')
+import { setContractAddresses } from '@azuro-protocol/sdk'
 
 setContractAddresses({
     core: '0x4fE6A9e47db94a9b2a4FfeDE8db1602FD1fdd37d',
@@ -168,7 +170,7 @@ setContractAddresses({
 The function sets the rpcUrl and ipfs that you will interact with.
 
 ```javascript
-import { configure } from ('@azuro-protocol/sdk')
+import { configure } from '@azuro-protocol/sdk'
 
 configure({
     rpcUrl: 'https://rpc.xdaichain.com/',
@@ -182,7 +184,7 @@ The function allows you to set your wallet provider for further interaction.
 
 ```javascript
 import { setWalletProvider } from '@azuro-protocol/sdk'
-import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers"
+import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers'
 
 //library: Web3Provider
 setWalletProvider(library);
@@ -191,7 +193,7 @@ setWalletProvider(library);
 ## fetchAllowance
 
 ```javascript
-import { fetchAllowance } from ('@azuro-protocol/sdk')
+import { fetchAllowance } from '@azuro-protocol/sdk'
 
 fetchAllowance(account) //account as string
 ```
@@ -200,7 +202,7 @@ fetchAllowance(account) //account as string
 The odds of events change over time, so in order to always know the actual odds we have a method.
 
 ```javascript
-import { calculateActualOdds } from ('@azuro-protocol/sdk')
+import { calculateActualOdds } from '@azuro-protocol/sdk'
 
 await calculateActualOdds({
     conditionId,
@@ -213,8 +215,8 @@ await calculateActualOdds({
 This method allows you to set the amount you allow our smart contract to use.
 
 ```javascript
-import { approve } from ('@azuro-protocol/sdk')
-import { constants } from ("ethers")
+import { approve } from '@azuro-protocol/sdk'
+import { constants } from 'ethers'
 
 approve(constants.MaxUint256)
 ```
@@ -224,7 +226,7 @@ approve(constants.MaxUint256)
 This method allows you to bet on an event.
 
 ```javascript
-import { placeBet } from ('@azuro-protocol/sdk')
+import { placeBet } from '@azuro-protocol/sdk'
 
 await placeBet({
     conditionId,
@@ -239,7 +241,7 @@ await placeBet({
 This method gives a list of your bets.
 
 ```javascript
-import { fetchUserBets } from ('@azuro-protocol/sdk')
+import { fetchUserBets } from '@azuro-protocol/sdk'
 
 await fetchUserBets(account)
 ```
@@ -289,7 +291,7 @@ An example of what you get when you use this function.
 This method allows you to get your reward for a winning bet.
 
 ```javascript
-import { redeemPrize } from ('@azuro-protocol/sdk')
+import { redeemPrize } from '@azuro-protocol/sdk'
 
 redeemPrize(nftId)
 ```
