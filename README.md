@@ -39,26 +39,28 @@ import {
   setContractAddresses,
   configure,
   setWalletProvider,
-  fetchAllowance,
+  setSelectedChainId
 } from '@azuro-protocol/sdk'
 import { Web3Provider } from '@ethersproject/providers'
-const Web3 = require('web3')
+import Web3 from ('web3')
 
 const library = new Web3Provider(Web3.currentProvider)
 
-await setContractAddresses({
+setSelectedChainId(100)
+
+setContractAddresses({
   core: '0x4fE6A9e47db94a9b2a4FfeDE8db1602FD1fdd37d',
   lp: '0xac004b512c33D029cf23ABf04513f1f380B3FD0a',
   bet: '0xFd9E5A2A1bfc8B57A288A3e12E2c601b0Cc7e476',
   token: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
 })
 
-await configure({
+configure({
   rpcUrl: 'https://rpc.xdaichain.com/',
   ipfsGateway: 'https://ipfs-gateway.azuro.org/ipfs/',
 })
 
-await setWalletProvider(library)
+setWalletProvider(library)
 ```
 ## API
 
@@ -67,14 +69,12 @@ await setWalletProvider(library)
 This function synchronizes with the blockchain and gives you all the matches that are currently recorded in the blockchain. You also have the option to filter out these matches if you don't want to receive past matches or cancelled matches.
 
 ```javascript
-const azuro = require('@azuro-protocol/sdk')
+import { fetchGames } from ('@azuro-protocol/sdk')
 
-await azuro.fetchGames({
+await fetchGames({
     resolved: false,
     canceled: false,
-}).then(async res => {
-    console.log(res)
-}).catch(e => console.log(e))
+})
 ```
 
 An example of what you get when you use this function.
@@ -128,13 +128,24 @@ An example of what you get when you use this function.
 
 To understand what identifiers to outcomeId and other parameters mean, see our IPFS list, where we store [dictionary](#dictionary) and descriptions.
 
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| id | Number | Game ID |
+| state | Number | Game status. 0 - Active. 1 - Resolved. 2 - Canceled |
+| league | String | Contains info about league and round |
+| country | String | League country |
+| participants | Array | List of participants. Each participant has "name" and "image" |
+| startsAt | Number | Timestamp. Date when this game starts |
+| marketRegistryId | Number | Dictionary from this [QmPWps8adamqZfnie6MutAsrYUQynQ8ckwFb3bggz2T4aU](https://ipfs-gateway.azuro.org/ipfs/QmPWps8adamqZfnie6MutAsrYUQynQ8ckwFb3bggz2T4aU) |
+| conditions | Array | Dictionary from OutcomeID [QmQ34UYPPtpxJiWcVj4buh4HzFo4Z9gwGt5KRiprQN3fkT](https://ipfs-gateway.azuro.org/ipfs/QmQ34UYPPtpxJiWcVj4buh4HzFo4Z9gwGt5KRiprQN3fkT) |
+
 ### setSelectedChainId
 
 A function to set the chain id you will use for blockchain transactions.
 
 ```javascript
-const azuro = require('@azuro-protocol/sdk')
-azuro.setSelectedChainId(100)
+import { setSelectedChainId } from ('@azuro-protocol/sdk')
+setSelectedChainId(100)
 ```
 
 ### setContractAddresses
@@ -142,9 +153,9 @@ azuro.setSelectedChainId(100)
 The function sets the contracts with which you will interact. These are the contracts of our protocol.
 
 ```javascript
-const azuro = require('@azuro-protocol/sdk')
+import { setContractAddresses } from ('@azuro-protocol/sdk')
 
-azuro.setContractAddresses({
+setContractAddresses({
     core: '0x4fE6A9e47db94a9b2a4FfeDE8db1602FD1fdd37d',
     lp: '0xac004b512c33D029cf23ABf04513f1f380B3FD0a',
     bet: '0xFd9E5A2A1bfc8B57A288A3e12E2c601b0Cc7e476',
@@ -157,9 +168,9 @@ azuro.setContractAddresses({
 The function sets the rpcUrl and ipfs that you will interact with.
 
 ```javascript
-const azuro = require('@azuro-protocol/sdk')
+import { configure } from ('@azuro-protocol/sdk')
 
-azuro.configure({
+configure({
     rpcUrl: 'https://rpc.xdaichain.com/',
     ipfsGateway: 'https://ipfs-gateway.azuro.org/ipfs/',
 })
@@ -180,18 +191,18 @@ setWalletProvider(library);
 ## fetchAllowance
 
 ```javascript
-const azuro = require('@azuro-protocol/sdk')
+import { fetchAllowance } from ('@azuro-protocol/sdk')
 
-azuro.fetchAllowance(account) //account as string
+fetchAllowance(account) //account as string
 ```
 
 ## calculateActualOdds
 The odds of events change over time, so in order to always know the actual odds we have a method.
 
 ```javascript
-const azuro = require('@azuro-protocol/sdk')
+import { calculateActualOdds } from ('@azuro-protocol/sdk')
 
-azuro.calculateActualOdds({
+await calculateActualOdds({
     conditionId,
     betAmount,
     outcomeId,
@@ -202,10 +213,10 @@ azuro.calculateActualOdds({
 This method allows you to set the amount you allow our smart contract to use.
 
 ```javascript
-const azuro = require('@azuro-protocol/sdk')
-const { constants } = reqire("ethers")
+import { approve } from ('@azuro-protocol/sdk')
+import { constants } from ("ethers")
 
-azuro.approve(constants.MaxUint256)
+approve(constants.MaxUint256)
 ```
 
 ## placeBet
@@ -213,9 +224,9 @@ azuro.approve(constants.MaxUint256)
 This method allows you to bet on an event.
 
 ```javascript
-const azuro = require('@azuro-protocol/sdk')
+import { placeBet } from ('@azuro-protocol/sdk')
 
-azuro.placeBet({
+await placeBet({
     conditionId,
     outcomeId,
     betAmount,
@@ -225,12 +236,12 @@ azuro.placeBet({
 ```
 
 ## fetchUserBets
-This method allows you to get a list of matches on which you have bet.
+This method gives a list of your bets.
 
 ```javascript
-const azuro = require('@azuro-protocol/sdk')
+import { fetchUserBets } from ('@azuro-protocol/sdk')
 
-azuro.fetchUserBets(account)
+await fetchUserBets(account)
 ```
 An example of what you get when you use this function.
 ```json
@@ -278,9 +289,9 @@ An example of what you get when you use this function.
 This method allows you to get your reward for a winning bet.
 
 ```javascript
-const azuro = require('@azuro-protocol/sdk')
+import { redeemPrize } from ('@azuro-protocol/sdk')
 
-azuro.redeemPrize(nftId)
+redeemPrize(nftId)
 ```
 
 ## Dictionary
