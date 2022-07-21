@@ -1,8 +1,10 @@
 import type { BigNumber } from 'ethers'
 
-import { getContract } from '../contracts'
+import { getContract, getProvider } from '../contracts'
 import calculateInitialOdds from './calculateInitialOdds'
 import { ConditionStatus } from '../helpers/enums'
+import makeBlockRanges from '../helpers/makeBlockRanges'
+import type { ConditionCreatedEvent } from '../contracts/types/Core'
 
 
 export type ConditionGameData = {
@@ -45,10 +47,26 @@ export type FetchConditionsProps = {
 const fetchConditions = async (props?: FetchConditionsProps): Promise<Conditions> => {
   const { resolved = true, canceled = true } = props?.filters || {}
 
+  const provider = getProvider()
   const coreContract = getContract('core')
-
   const createdFilter = coreContract.filters.ConditionCreated()
-  const events = await coreContract.queryFilter(createdFilter, props?.from)
+
+  let events: ConditionCreatedEvent[]
+
+  if (props?.from) {
+    const latestBlock = await provider.getBlockNumber()
+
+    const ranges = makeBlockRanges(props.from, latestBlock)
+
+    events = (await Promise.all(
+      ranges.map(([ startBlock, endBlock ]) => (
+        coreContract.queryFilter(createdFilter, startBlock, endBlock)
+      ))
+    )).flat()
+  }
+  else {
+    events = await coreContract.queryFilter(createdFilter, props?.from)
+  }
 
   const conditions = await Promise.all(events.map(async ({ args: { conditionId: rawConditionId } }) => {
     try {
