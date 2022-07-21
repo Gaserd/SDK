@@ -10,12 +10,8 @@ const getProvider = (withWalletProvider?: boolean) => {
     return new JsonRpcProvider()
   }
 
-  if (state.walletProvider) {
-    if (withWalletProvider) {
-      return state.walletProvider.getSigner()
-    }
-
-    return state.walletProvider
+  if (state.walletProvider && withWalletProvider) {
+    return state.walletProvider.getSigner()
   }
 
   return new JsonRpcProvider(config.rpcUrl)
