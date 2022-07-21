@@ -42,10 +42,12 @@ export type FetchConditionsProps = {
     canceled?: boolean
   }
   from?: number
+  rangeWide?: number
 }
 
 const fetchConditions = async (props?: FetchConditionsProps): Promise<Conditions> => {
-  const { resolved = true, canceled = true } = props?.filters || {}
+  const { filters, from, rangeWide } = props || {}
+  const { resolved = true, canceled = true } = filters || {}
 
   const provider = getProvider()
   const coreContract = getContract('core')
@@ -53,10 +55,10 @@ const fetchConditions = async (props?: FetchConditionsProps): Promise<Conditions
 
   let events: ConditionCreatedEvent[]
 
-  if (props?.from) {
+  if (from) {
     const latestBlock = await provider.getBlockNumber()
 
-    const ranges = makeBlockRanges(props.from, latestBlock)
+    const ranges = makeBlockRanges(from, latestBlock, rangeWide)
 
     events = (await Promise.all(
       ranges.map(([ startBlock, endBlock ]) => (
