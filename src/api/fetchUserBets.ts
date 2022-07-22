@@ -32,6 +32,11 @@ const fetchBet = async (nftId: number) => {
     const outcomeBetId = rawOutcome.toNumber()
     const outcomeWinId = outcomeWin.toNumber()
 
+    if (!betTypeOdd[outcomeBetId]) {
+      console.warn(`Unknown outcomeId ${outcomeBetId}. Please update the Azuro SDK version`)
+      return
+    }
+
     const { marketRegistryId, outcomeRegistryId, paramId } = betTypeOdd[outcomeBetId]
 
     const rate = parseFloat(formatUnits(odds, await getRateDecimals()))
